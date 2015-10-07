@@ -23,13 +23,28 @@ public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle save
 tvTitle = (TextView) v.findViewById(R.id.tvsection);
 tvDescription = (TextView) v.findViewById(R.id.tvdescription);
 tvImage = (ImageView) v.findViewById(R.id.tvimage);
-    Bundle bundle = getArguments();
+   /* Bundle bundle = this.getArguments();
     String title = bundle.getString("title");
     String description = bundle.getString("description");
     String image = bundle.getString("image");
 tvTitle.setText(title);
 tvDescription.setText(description);
-    Picasso.with(getActivity()).load(image).into(tvImage);
+    Picasso.with(getActivity()).load(image).into(tvImage);*/
 return v;
 }
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        Bundle bundle = this.getArguments();
+        if(bundle!=null)
+        {
+            String title = getArguments().getString("title");
+            String description = getArguments().getString("description");
+            String image = getArguments().getString("image");
+            tvTitle.setText(title);
+            tvDescription.setText(description);
+            Picasso.with(getActivity()).load(image).into(tvImage);
+        }
+
+    }
 }

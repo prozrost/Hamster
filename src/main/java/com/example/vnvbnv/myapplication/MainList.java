@@ -23,7 +23,7 @@ import java.util.HashMap;
 /**
  * Created by vnvbnv on 03.10.2015.
  */
-public class MainList extends ListFragment  implements AdapterView.OnItemClickListener{
+public class MainList extends ListFragment{
     ListView mainList;
     private static String url = "https://fierce-citadel-4259.herokuapp.com/hamsters";
     private static final String TITLE = "title";
@@ -33,31 +33,31 @@ public class MainList extends ListFragment  implements AdapterView.OnItemClickLi
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_fragme, null);
         mainList = (ListView)v.findViewById(android.R.id.list);
-        mainList.setOnItemClickListener(this);
+     //   mainList.setOnListItemClickListener(this);
         return v;
     }
 
 
 
 
-public void onActivityCreated(Bundle savedInstanceState){
-    super.onActivityCreated(savedInstanceState);
-new ProgressTask().execute();
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        new ProgressTask().execute();
 
-}
+    }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-String title = jsonlist1.get(position).get("title");
-String description= jsonlist1.get(position).get("description");
-String image = jsonlist1.get(position).get("image");
+    public void onListItemClick(ListView l, View view, int position, long id) {
+        super.onListItemClick(l,view,position,id);
+        String title = jsonlist1.get(position).get("title");
+        String description= jsonlist1.get(position).get("description");
+        String image = jsonlist1.get(position).get("image");
         MyDetailFragment detailFragment = new MyDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("title",title);
         bundle.putString("description", description);
         bundle.putString("image", image);
         detailFragment.setArguments(bundle);
-
         FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.FragmentCont,detailFragment);
         fragmentTransaction.addToBackStack(null);
@@ -75,7 +75,7 @@ String image = jsonlist1.get(position).get("image");
             context = activity;
             dialog = new ProgressDialog(getActivity().getApplicationContext());
 
-            }
+        }
 
         public ProgressTask() {
             dialog = new ProgressDialog(getActivity().getApplicationContext());
@@ -104,9 +104,9 @@ String image = jsonlist1.get(position).get("image");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-        }
+            }
             return null;
-    }
+        }
 
 
         protected void onPreExecute(){
@@ -121,8 +121,8 @@ String image = jsonlist1.get(position).get("image");
                 }
 
 
-                    CustomListAdapter adapter = new CustomListAdapter(getActivity(), jsonlist1, R.layout.list_item, new String[]{TITLE, DESCRIPTION}, new int[]{R.id.title, R.id.description});
-                   mainList.setAdapter(adapter);
+                CustomListAdapter adapter = new CustomListAdapter(getActivity(), jsonlist1, R.layout.list_item, new String[]{TITLE, DESCRIPTION}, new int[]{R.id.title, R.id.description});
+                mainList.setAdapter(adapter);
 
 
 

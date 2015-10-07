@@ -10,15 +10,19 @@ import android.view.MenuItem;
 public class MainActivity extends Activity {
 MainList fragmenlist;
     FragmentTransaction ftrans;
+    MyDetailFragment detailfragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 fragmenlist = new MainList();
+        detailfragment = new MyDetailFragment();
         ftrans = getFragmentManager().beginTransaction();
-        ftrans.add(R.id.FragmentCont,fragmenlist);
-        ftrans.commit();
-    }
+
+            ftrans.add(R.id.FragmentCont, fragmenlist);
+            ftrans.commit();
+        }
+    
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
