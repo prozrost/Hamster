@@ -5,6 +5,8 @@ import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,16 +27,18 @@ import java.util.HashMap;
  * Created by vnvbnv on 03.10.2015.
  */
 public class MainList extends ListFragment{
+    SqlHelper dbHelper;
     ListView mainList;
     private static String url = "https://fierce-citadel-4259.herokuapp.com/hamsters";
     private static final String TITLE = "title";
     private static final String DESCRIPTION = "description";
     private static final String IMAGE = "image";
     ArrayList<HashMap<String,String>> jsonlist1 = new ArrayList<HashMap<String, String>>();
+    ArrayList<HashMap<String,String>> bdList = new ArrayList<HashMap<String, String>>();
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_fragme, null);
         mainList = (ListView)v.findViewById(android.R.id.list);
-     //   mainList.setOnListItemClickListener(this);
+
         return v;
     }
 
@@ -42,6 +47,7 @@ public class MainList extends ListFragment{
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+
         new ProgressTask().execute();
 
     }
@@ -70,15 +76,20 @@ public class MainList extends ListFragment{
         private MainActivity context;
         private String[] params;
 
-        public ProgressTask(MainActivity activity) {
+        public ProgressTask(MainActivity activity) throws SQLException {
             this.activity = getActivity();
             context = activity;
             dialog = new ProgressDialog(getActivity().getApplicationContext());
-
+dbHelper = new SqlHelper(getActivity());
         }
 
-        public ProgressTask() {
+        public ProgressTask()  {
             dialog = new ProgressDialog(getActivity().getApplicationContext());
+            try {
+                dbHelper = new SqlHelper(getActivity().getApplicationContext());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -92,7 +103,10 @@ public class MainList extends ListFragment{
                     String vtitle = c.getString(TITLE);
                     String vdescription = c.getString(DESCRIPTION);
                     String vimage = c.getString(IMAGE);
+                    dbHelper.open();
+                    dbHelper.createEntry(vtitle, vimage, vdescription);
 
+                    dbHelper.close();
 
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TITLE, vtitle);
@@ -102,6 +116,8 @@ public class MainList extends ListFragment{
                     jsonlist1.add(map);
 
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
@@ -132,4 +148,5 @@ public class MainList extends ListFragment{
         }
 
     }
+
 }

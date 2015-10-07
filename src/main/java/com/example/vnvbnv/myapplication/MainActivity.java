@@ -22,7 +22,7 @@ fragmenlist = new MainList();
             ftrans.add(R.id.FragmentCont, fragmenlist);
             ftrans.commit();
         }
-    
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
