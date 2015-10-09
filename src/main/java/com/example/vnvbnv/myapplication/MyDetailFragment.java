@@ -36,15 +36,14 @@ return v;
         super.onActivityCreated(savedInstanceState);
 
         Bundle bundle = this.getArguments();
-        if(bundle!=null)
-        {
+
             String title = getArguments().getString("title");
             String description = getArguments().getString("description");
             String image = getArguments().getString("image");
             tvTitle.setText(title);
             tvDescription.setText(description);
             Picasso.with(getActivity()).load(image).into(tvImage);
-        }
+
 
     }
 }

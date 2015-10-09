@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 public class MainList extends ListFragment{
     SqlHelper dbHelper;
     ListView mainList;
+    ProgressBar progBar;
     private static String url = "https://fierce-citadel-4259.herokuapp.com/hamsters";
     private static final String TITLE = "title";
     private static final String DESCRIPTION = "description";
@@ -38,7 +40,7 @@ public class MainList extends ListFragment{
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_fragme, null);
         mainList = (ListView)v.findViewById(android.R.id.list);
-
+progBar = (ProgressBar) v.findViewById(R.id.progressBar);
         return v;
     }
 
@@ -54,7 +56,7 @@ public class MainList extends ListFragment{
 
     @Override
     public void onListItemClick(ListView l, View view, int position, long id) {
-        super.onListItemClick(l,view,position,id);
+        super.onListItemClick(l, view, position, id);
         String title = jsonlist1.get(position).get("title");
         String description= jsonlist1.get(position).get("description");
         String image = jsonlist1.get(position).get("image");
@@ -126,27 +128,28 @@ dbHelper = new SqlHelper(getActivity());
 
 
         protected void onPreExecute(){
-
+progBar.setVisibility(View.VISIBLE);
         }
         protected void onPostExecute(final Boolean success){
 
 
-            try{
-                if((this.dialog != null)&& this.dialog.isShowing()){
-                    this.dialog.dismiss();
-                }
 
 
+progBar.setVisibility(View.GONE);
                 CustomListAdapter adapter = new CustomListAdapter(getActivity(), jsonlist1, R.layout.list_item, new String[]{TITLE, DESCRIPTION}, new int[]{R.id.title, R.id.description});
                 mainList.setAdapter(adapter);
 
 
 
 
-            }catch
-                    (final IllegalArgumentException e){e.printStackTrace();}
+
         }
 
     }
+    private void displaysavedlv() {
+        bdList = dbHelper.getAllData();
 
+        CustomListAdapter adapter1 = new CustomListAdapter(getActivity(), bdList, R.id.list_item, new String[]{TITLE, DESCRIPTION}, new int[]{R.id.title, R.id.description});
+        mainList.setAdapter(adapter1);
+    }
 }

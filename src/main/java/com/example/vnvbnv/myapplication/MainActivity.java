@@ -1,15 +1,24 @@
 package com.example.vnvbnv.myapplication;
 
+import android.app.ActionBar;
 import android.app.Activity;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class MainActivity extends Activity {
-MainList fragmenlist;
+    private String[] mCatTitles;
+    private ListView mDrawerListView;
+AboutFragment aboutfragment;
+    MainList fragmenlist;
     FragmentTransaction ftrans;
+    FragmentTransaction ftrans1;
     MyDetailFragment detailfragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,9 +27,25 @@ MainList fragmenlist;
 fragmenlist = new MainList();
         detailfragment = new MyDetailFragment();
         ftrans = getFragmentManager().beginTransaction();
-
+        mCatTitles = getResources().getStringArray(R.array.screen_array);
+        mDrawerListView = (ListView) findViewById(R.id.left_drawer);
+        mDrawerListView.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, mCatTitles));
             ftrans.add(R.id.FragmentCont, fragmenlist);
             ftrans.commit();
+        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position==0){
+                    aboutfragment=new AboutFragment();
+                    ftrans1 = getFragmentManager().beginTransaction();
+                    ftrans1.replace(R.id.FragmentCont,aboutfragment);
+                    ftrans1.addToBackStack(null);
+                    ftrans1.commit();
+
+                }
+            }
+        });
         }
 
 

@@ -3,4 +3,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string-array name="screen_array">
+        <item>О программе</item>
+        <item>Настройки</item>
+
+    </string-array>
 </resources>
