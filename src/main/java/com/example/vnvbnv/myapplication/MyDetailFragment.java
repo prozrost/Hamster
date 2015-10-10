@@ -1,6 +1,9 @@
 package com.example.vnvbnv.myapplication;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +22,7 @@ public class MyDetailFragment extends Fragment {
    ImageView tvImage;
 
 public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
-    View v = inflater.inflate(R.layout.detail_fragment,null);
+    View v = inflater.inflate(R.layout.detail_fragment, null);
 tvTitle = (TextView) v.findViewById(R.id.tvsection);
 tvDescription = (TextView) v.findViewById(R.id.tvdescription);
 tvImage = (ImageView) v.findViewById(R.id.tvimage);
@@ -37,13 +40,20 @@ return v;
 
         Bundle bundle = this.getArguments();
 
-            String title = getArguments().getString("title");
-            String description = getArguments().getString("description");
-            String image = getArguments().getString("image");
-            tvTitle.setText(title);
-            tvDescription.setText(description);
-            Picasso.with(getActivity()).load(image).into(tvImage);
+    String title = getArguments().getString("title");
+    String description = getArguments().getString("description");
+    String image = getArguments().getString("image");
+    tvTitle.setText(title);
+    tvDescription.setText(description);
+    Picasso.with(getActivity()).load(image).into(tvImage);
 
 
-    }
+
+
+
+}
+
+
+
+
 }

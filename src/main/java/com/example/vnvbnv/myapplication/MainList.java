@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -28,6 +29,7 @@ import java.util.HashMap;
  * Created by vnvbnv on 03.10.2015.
  */
 public class MainList extends ListFragment{
+
     SqlHelper dbHelper;
     ListView mainList;
     ProgressBar progBar;
@@ -49,9 +51,12 @@ progBar = (ProgressBar) v.findViewById(R.id.progressBar);
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-
-        new ProgressTask().execute();
-
+if (isNetworkConnected()==true) {
+    new ProgressTask().execute();
+}
+        else{
+    displaysavedlv();
+}
     }
 
     @Override
@@ -60,11 +65,24 @@ progBar = (ProgressBar) v.findViewById(R.id.progressBar);
         String title = jsonlist1.get(position).get("title");
         String description= jsonlist1.get(position).get("description");
         String image = jsonlist1.get(position).get("image");
+
+
         MyDetailFragment detailFragment = new MyDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("title",title);
-        bundle.putString("description", description);
-        bundle.putString("image", image);
+        if(isNetworkConnected()==true) {
+            bundle.putString("title", title);
+            bundle.putString("description", description);
+            bundle.putString("image", image);
+        }
+        else
+        {
+            String dbtitle= bdList.get(position).get("title");
+            String dbdescription = bdList.get(position).get("description");
+            String dvimage = bdList.get(position).get("image");
+            bundle.putString("title",dbtitle);
+            bundle.putString("description",dbdescription);
+            bundle.putString("image",dvimage);
+        }
         detailFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.FragmentCont,detailFragment);
@@ -82,7 +100,7 @@ progBar = (ProgressBar) v.findViewById(R.id.progressBar);
             this.activity = getActivity();
             context = activity;
             dialog = new ProgressDialog(getActivity().getApplicationContext());
-dbHelper = new SqlHelper(getActivity());
+
         }
 
         public ProgressTask()  {
@@ -107,7 +125,6 @@ dbHelper = new SqlHelper(getActivity());
                     String vimage = c.getString(IMAGE);
                     dbHelper.open();
                     dbHelper.createEntry(vtitle, vimage, vdescription);
-
                     dbHelper.close();
 
                     HashMap<String, String> map = new HashMap<>();
@@ -129,16 +146,20 @@ dbHelper = new SqlHelper(getActivity());
 
         protected void onPreExecute(){
 progBar.setVisibility(View.VISIBLE);
+            dbHelper.deleteallrecords();
         }
         protected void onPostExecute(final Boolean success){
 
 
 
-
-progBar.setVisibility(View.GONE);
-                CustomListAdapter adapter = new CustomListAdapter(getActivity(), jsonlist1, R.layout.list_item, new String[]{TITLE, DESCRIPTION}, new int[]{R.id.title, R.id.description});
-                mainList.setAdapter(adapter);
-
+if (isNetworkConnected()==true) {
+    progBar.setVisibility(View.GONE);
+    CustomListAdapter adapter = new CustomListAdapter(getActivity(), jsonlist1, R.layout.list_item, new String[]{TITLE, DESCRIPTION}, new int[]{R.id.title, R.id.description});
+    mainList.setAdapter(adapter);
+}
+            else {
+    displaysavedlv();
+}
 
 
 
@@ -147,9 +168,26 @@ progBar.setVisibility(View.GONE);
 
     }
     private void displaysavedlv() {
+        try {
+            dbHelper = new SqlHelper(getActivity().getApplicationContext());
+          
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        progBar.setVisibility(View.GONE);
+
         bdList = dbHelper.getAllData();
 
         CustomListAdapter adapter1 = new CustomListAdapter(getActivity(), bdList, R.id.list_item, new String[]{TITLE, DESCRIPTION}, new int[]{R.id.title, R.id.description});
         mainList.setAdapter(adapter1);
+    }
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null) {
+            // There are no active networks.
+            return false;
+        } else
+            return true;
     }
 }

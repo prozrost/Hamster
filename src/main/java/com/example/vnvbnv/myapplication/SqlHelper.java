@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -116,5 +117,11 @@ public class SqlHelper {
             res.moveToNext();
         }
         return array_list;
+    }
+    public void deleteallrecords(){
+
+       SQLiteDatabase db = this.ourHelper.getWritableDatabase();
+            db.delete("categoryTable",null,null);
+db.close();
     }
 }
