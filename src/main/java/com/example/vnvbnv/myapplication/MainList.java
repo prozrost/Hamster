@@ -170,7 +170,7 @@ if (isNetworkConnected()==true) {
     private void displaysavedlv() {
         try {
             dbHelper = new SqlHelper(getActivity().getApplicationContext());
-          
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
