@@ -11,6 +11,9 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -45,7 +48,11 @@ public class MainList extends ListFragment{
 progBar = (ProgressBar) v.findViewById(R.id.progressBar);
         return v;
     }
+public void onCreate(Bundle savedInstanceState){
+    setHasOptionsMenu(true);
+    super.onCreate(savedInstanceState);
 
+}
 
 
 
@@ -62,14 +69,15 @@ if (isNetworkConnected()==true) {
     @Override
     public void onListItemClick(ListView l, View view, int position, long id) {
         super.onListItemClick(l, view, position, id);
-        String title = jsonlist1.get(position).get("title");
-        String description= jsonlist1.get(position).get("description");
-        String image = jsonlist1.get(position).get("image");
+
 
 
         MyDetailFragment detailFragment = new MyDetailFragment();
         Bundle bundle = new Bundle();
         if(isNetworkConnected()==true) {
+            String title = jsonlist1.get(position).get("title");
+            String description= jsonlist1.get(position).get("description");
+            String image = jsonlist1.get(position).get("image");
             bundle.putString("title", title);
             bundle.putString("description", description);
             bundle.putString("image", image);
@@ -85,7 +93,7 @@ if (isNetworkConnected()==true) {
         }
         detailFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.FragmentCont,detailFragment);
+        fragmentTransaction.replace(R.id.FragmentCont, detailFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
@@ -189,5 +197,30 @@ if (isNetworkConnected()==true) {
             return false;
         } else
             return true;
+    }
+    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater){
+        MenuItem refreshmenuitem;
+        inflater.inflate(R.menu.menu_fragment1,menu);
+        super.onCreateOptionsMenu(menu,inflater);
+if(isNetworkConnected()!=true){
+    refreshmenuitem = menu.findItem(R.id.action_reload);
+    refreshmenuitem.setVisible(false);
+}
+    }
+    public boolean onOptionsItemSelected(MenuItem item){
+switch (item.getItemId()){
+    case R.id.action_reload:
+        if(isNetworkConnected()==true){
+            new ProgressTask().execute();
+
+        }
+
+
+
+
+
+}
+
+        return super.onOptionsItemSelected(item);
     }
 }
